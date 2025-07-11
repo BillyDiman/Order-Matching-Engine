@@ -34,12 +34,16 @@ OrderResult orderBook::PlaceOrder (int volume, double price, std::string clientN
                     if(tempOrder.volume != 0){
                         oppositePriceQueue.push_front(tempOrder);
                     }
+                    Trade tempTrade = Trade(++currentTradeID, newOrderID, tempOrder.orderID, price, newOrder.volume, newOrder.clientName, tempOrder.clientName, time(nullptr));
+                    tradeLog.push_back(tempTrade);
                     CancelOrder(newOrder.orderID);
                     newOrderStatus = COMPLETED;
                     finalVolume = 0;
                     break;
                 }else{
                     newOrder.volume -= tempOrder.volume;
+                    Trade tempTrade = Trade(++currentTradeID, newOrderID, tempOrder.orderID, price, tempOrder.volume, newOrder.clientName, tempOrder.clientName, time(nullptr));
+                    tradeLog.push_back(tempTrade);
                     finalVolume -= tempOrder.volume;
                     sellOrderIDMap.erase(tempOrder.orderID);
                     newOrderStatus = IN_PROGRESS;
@@ -66,12 +70,16 @@ OrderResult orderBook::PlaceOrder (int volume, double price, std::string clientN
                     if(tempOrder.volume != 0){
                         oppositePriceQueue.push_front(tempOrder);
                     }
+                    Trade tempTrade = Trade(++currentTradeID, tempOrder.orderID, newOrderID, price, newOrder.volume, tempOrder.clientName, newOrder.clientName, time(nullptr));
+                    tradeLog.push_back(tempTrade);
                     CancelOrder(newOrder.orderID);
                     newOrderStatus = COMPLETED;
                     finalVolume = 0;
                     break;
                 }else{
                     newOrder.volume -= tempOrder.volume;
+                    Trade tempTrade = Trade(++currentTradeID, tempOrder.orderID, newOrderID, price, tempOrder.volume, tempOrder.clientName, newOrder.clientName, time(nullptr));
+                    tradeLog.push_back(tempTrade);
                     finalVolume -= tempOrder.volume;
                     buyOrderIDMap.erase(tempOrder.orderID);
                     newOrderStatus = IN_PROGRESS;
@@ -149,9 +157,7 @@ int orderBook::CancelOrder (int ID){
 }
 
 
-double orderBook::GetVolumeAtPrice (double price){
+std::vector<Trade> orderBook::GetTradeLog (){
 
-    //Maybe don't need...?
-    //Probably change to modify order, but that seems redundant given you can just cancel then create a new one
-
+    return tradeLog;
 }

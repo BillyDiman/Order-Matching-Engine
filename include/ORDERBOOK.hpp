@@ -3,11 +3,14 @@
 
 #include "ORDER.hpp"
 #include "ORDERRESULT.hpp"
+#include "TRADE.hpp"
+
 #include <ctime>
 #include <string>
 #include <queue>
 #include <map>
 #include <unordered_map>
+#include <vector>
 
 
 class orderBook {
@@ -19,12 +22,15 @@ class orderBook {
         std::unordered_map<int, Order> buyOrderIDMap;
         std::unordered_map<int, Order> sellOrderIDMap;
 
+        int currentTradeID = 0;
+        std::vector<Trade> tradeLog;
+
         Order CreateOrder (int volume, double price, std::string clientName, orderSide side);   
     
     public:
         OrderResult PlaceOrder (int volume, double price, std::string clientName, orderSide side);                                   //Returns orderID and whether it completed, is in progress, or couldn't be filled
         int CancelOrder (int ID);                                       //Returns 0 for success, 1 for error
-        double GetVolumeAtPrice (double price);                         //Returns volume at price
+        std::vector<Trade> GetTradeLog ();                              //Returns Trade Log
 
 };
 

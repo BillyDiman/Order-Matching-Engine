@@ -7,7 +7,7 @@ This is a basic C++ implementation of a limit order book supporting **limit buy/
 - Place limit orders (buy/sell)
 - Match orders based on price-time priority
 - Cancel orders by ID
-- Track and log completed trades (WIP)
+- Track and log completed trades
 - Return detailed order execution status
 
 ## Project Structure
@@ -32,7 +32,7 @@ main.cpp # Entry point (WIP) <br>
 ## Order Lifecycle
 
 1. **PlaceOrder**: Creates and inserts an order into the correct queue, then attempts to fill against opposite book at given price.
-3. **Trade Logging**: On match, generates and stores a `Trade`. (WIP)
+3. **Trade Logging**: On match, generates and stores a `Trade`. 
 4. **CancelOrder**: Removes an order by ID if unmatched.
 
 ## Next Steps
