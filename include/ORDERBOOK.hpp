@@ -2,6 +2,7 @@
 #define ORDER_BOOK
 
 #include "ORDER.hpp"
+#include "ORDERRESULT.hpp"
 #include <ctime>
 #include <string>
 #include <queue>
@@ -21,7 +22,7 @@ class orderBook {
         Order CreateOrder (int volume, double price, std::string clientName, orderSide side);   
     
     public:
-        int PlaceOrder (int volume, double price, std::string clientName, orderSide side);                                   //Returns orderID
+        OrderResult PlaceOrder (int volume, double price, std::string clientName, orderSide side);                                   //Returns orderID and whether it completed, is in progress, or couldn't be filled
         int CancelOrder (int ID);                                       //Returns 0 for success, 1 for error
         double GetVolumeAtPrice (double price);                         //Returns volume at price
 
