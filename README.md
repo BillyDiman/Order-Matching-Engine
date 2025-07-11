@@ -17,7 +17,7 @@ This is a basic C++ implementation of a limit order book supporting **limit buy/
 /src <br>
 ├── ORDERBOOK.cpp # Core order book logic <br>
 ├── ORDERRESULT.cpp # Order execution result struct <br>
-├── TRADE.cpp # Trade logging struct (WIP) <br>
+├── TRADE.cpp # Trade logging struct <br>
 ├── ORDER.cpp # Order struct <br>
 /include <br>
 ├── ORDERBOOK.hpp <br>
