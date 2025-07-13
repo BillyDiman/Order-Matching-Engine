@@ -18,13 +18,13 @@ OrderResult orderBook::PlaceOrder (int volume, double price, std::string clientN
     int initialVolume = volume;
     int finalVolume = volume;
 
-    orderSide oppositeSide;
     orderStatus newOrderStatus = NOT_STARTED;
 
+    bool done = false;
+
     if(side == BUY){
-        oppositeSide = SELL;
-        std::deque<Order>& oppositePriceQueue = sellOrderMap[price];
-        if(!oppositePriceQueue.empty()){
+        for(auto it = sellOrderMap.begin(); it != sellOrderMap.end() && it->first <= price; ++it){
+            std::deque<Order>& oppositePriceQueue = sellOrderMap[it->first];
             while(!oppositePriceQueue.empty()){
                 Order tempOrder = oppositePriceQueue.front();
                 oppositePriceQueue.pop_front();
@@ -33,34 +33,34 @@ OrderResult orderBook::PlaceOrder (int volume, double price, std::string clientN
                     tempOrder.volume -= newOrder.volume;
                     if(tempOrder.volume != 0){
                         oppositePriceQueue.push_front(tempOrder);
+                        sellOrderIDMap[tempOrder.orderID] = tempOrder;
                     }
-                    Trade tempTrade = Trade(++currentTradeID, newOrderID, tempOrder.orderID, price, newOrder.volume, newOrder.clientName, tempOrder.clientName, time(nullptr));
+                    Trade tempTrade = Trade(++currentTradeID, newOrderID, tempOrder.orderID, tempOrder.price, newOrder.volume, newOrder.clientName, tempOrder.clientName, time(nullptr));
                     tradeLog.push_back(tempTrade);
                     CancelOrder(newOrder.orderID);
                     newOrderStatus = COMPLETED;
                     finalVolume = 0;
+                    done = true;
                     break;
                 }else{
                     newOrder.volume -= tempOrder.volume;
-                    Trade tempTrade = Trade(++currentTradeID, newOrderID, tempOrder.orderID, price, tempOrder.volume, newOrder.clientName, tempOrder.clientName, time(nullptr));
+                    Trade tempTrade = Trade(++currentTradeID, newOrderID, tempOrder.orderID, tempOrder.price, tempOrder.volume, newOrder.clientName, tempOrder.clientName, time(nullptr));
                     tradeLog.push_back(tempTrade);
                     finalVolume -= tempOrder.volume;
                     sellOrderIDMap.erase(tempOrder.orderID);
                     newOrderStatus = IN_PROGRESS;
                 }
             }
-            std::cout << "Order placed.";
-            OrderResult ret = OrderResult(newOrderID, newOrderStatus, price, (initialVolume - finalVolume), time(nullptr));
-            return ret;
-        }else{
-            std::cout << "Order couldn't be placed at this price.";
-            OrderResult ret = OrderResult(newOrderID, newOrderStatus, price, (initialVolume - finalVolume), time(nullptr));
-            return ret;
+            if(done == true){
+                break;
+            }
         }
+        std::cout << "Order placed.";
+        OrderResult ret = OrderResult(newOrderID, newOrderStatus, price, (initialVolume - finalVolume), time(nullptr));
+        return ret;
     }else{
-        oppositeSide = BUY;
-        std::deque<Order>& oppositePriceQueue = buyOrderMap[price];
-        if(!oppositePriceQueue.empty()){
+        for(auto it = buyOrderMap.rbegin(); it != buyOrderMap.rend() && it->first >= price; ++it){
+            std::deque<Order>& oppositePriceQueue = buyOrderMap[it->first];
             while(!oppositePriceQueue.empty()){
                 Order tempOrder = oppositePriceQueue.front();
                 oppositePriceQueue.pop_front();
@@ -69,30 +69,31 @@ OrderResult orderBook::PlaceOrder (int volume, double price, std::string clientN
                     tempOrder.volume -= newOrder.volume;
                     if(tempOrder.volume != 0){
                         oppositePriceQueue.push_front(tempOrder);
+                        buyOrderIDMap[tempOrder.orderID] = tempOrder;
                     }
-                    Trade tempTrade = Trade(++currentTradeID, tempOrder.orderID, newOrderID, price, newOrder.volume, tempOrder.clientName, newOrder.clientName, time(nullptr));
+                    Trade tempTrade = Trade(++currentTradeID, tempOrder.orderID, newOrderID, tempOrder.price, newOrder.volume, tempOrder.clientName, newOrder.clientName, time(nullptr));
                     tradeLog.push_back(tempTrade);
                     CancelOrder(newOrder.orderID);
                     newOrderStatus = COMPLETED;
                     finalVolume = 0;
+                    done = true;
                     break;
                 }else{
                     newOrder.volume -= tempOrder.volume;
-                    Trade tempTrade = Trade(++currentTradeID, tempOrder.orderID, newOrderID, price, tempOrder.volume, tempOrder.clientName, newOrder.clientName, time(nullptr));
+                    Trade tempTrade = Trade(++currentTradeID, tempOrder.orderID, newOrderID, tempOrder.price, tempOrder.volume, tempOrder.clientName, newOrder.clientName, time(nullptr));
                     tradeLog.push_back(tempTrade);
                     finalVolume -= tempOrder.volume;
                     buyOrderIDMap.erase(tempOrder.orderID);
                     newOrderStatus = IN_PROGRESS;
                 }
             }
+            if(done == true){
+                break;
+            }
+        }
             std::cout << "Order placed.";
             OrderResult ret = OrderResult(newOrderID, newOrderStatus, price, (initialVolume - finalVolume), time(nullptr));
             return ret;
-        }else{
-            std::cout << "Order couldn't be placed at this price.";
-            OrderResult ret = OrderResult(newOrderID, newOrderStatus, price, (initialVolume - finalVolume), time(nullptr));
-            return ret;
-        }
     }
 }
 

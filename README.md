@@ -14,17 +14,21 @@ This is a basic C++ implementation of a limit order book supporting **limit buy/
 
 
 <p>
-/src <br>
-├── ORDERBOOK.cpp # Core order book logic <br>
-├── ORDERRESULT.cpp # Order execution result struct <br>
-├── TRADE.cpp # Trade logging struct <br>
-├── ORDER.cpp # Order struct <br>
-/include <br>
-├── ORDERBOOK.hpp <br>
-├── ORDERRESULT.hpp <br>
-├── TRADE.hpp <br>
-├── ORDER.hpp <br>
-main.cpp # Entry point (WIP) <br>
+. <br>
+├── README.md <br>
+├── include <br>
+    ├── BUILD <br>
+    ├── ORDER.hpp <br>
+    ├── ORDERBOOK.hpp <br>
+    ├── ORDERRESULT.hpp <br>
+    └── TRADE.hpp <br>
+├── main.cpp <br>
+└── src <br>
+    ├── BUILD <br>
+    ├── ORDER.cpp <br>
+    ├── ORDERBOOK.cpp <br>
+    ├── ORDERRESULT.cpp <br>
+    └── TRADE.cpp <br>
 </p>
 
 
